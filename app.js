@@ -61,8 +61,8 @@ app.post("/", (req, res) => {
         foundList.save();
         res.redirect(`/${listName}`);
       };
-      
-    }); 
+
+    });
   }
   // below commented out code does the same thing.
   // Item.insertMany({name: itemName}, (err, doc) => {if (err) {console.log(err)} else {console.log(doc);}});
@@ -73,12 +73,11 @@ app.post("/", (req, res) => {
 app.post("/delete", (req, res) => {
   const toDelete = req.body.checkbox;
   const listName = req.body.listName;
-  console.log(toDelete);
   if (listName === "Today") {
     Item.findByIdAndRemove({ _id: toDelete }, (err) => { if (err) { console.log(err) } else { console.log("successfully deleted an Item from the Today list") } });
     res.redirect("/")
   } else {
-    List.findOneAndUpdate({name: listName}, {$pull: {items: {_id: toDelete }}}, (err, results) => {
+    List.findOneAndUpdate({ name: listName }, { $pull: { items: { _id: toDelete } } }, (err, results) => {
       if (!err) {
         res.redirect(`/${listName}`)
       }
@@ -98,7 +97,7 @@ app.get("/:listName", (req, res) => {
       dynamicList.save((err, results) => {
         res.redirect(`/${listName}`);
       });
-      
+
     } else {
       res.render("list", { listTitle: results.name, newListItems: results.items })
     }
