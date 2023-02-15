@@ -15,6 +15,7 @@ async function main() {
   await mongoose.connect('mongodb://127.0.0.1:27017/todolistDB');
 }
 
+//items Schema
 const itemsSchema = new mongoose.Schema({ name: { type: String, required: true } });
 const Item = mongoose.model("item", itemsSchema);
 const newItem1 = new Item({ name: "Welcome to the TodoList!" });
@@ -22,9 +23,14 @@ const newItem2 = new Item({ name: "Hit + to Add into list" });
 const newItem3 = new Item({ name: "<== Check the box to cross the item of the list" })
 const defaultItems = [newItem1, newItem2, newItem3];
 
+//List Schema
+const listSchema = { name: String, items: [itemsSchema] };
+const List = mongoose.model("list", listSchema);
 
 
-app.get("/", function (req, res) {
+
+
+app.get("/", (req, res) => {
 
   Item.find({}, (err, items) => {
     if (items.length === 0) {
@@ -59,16 +65,29 @@ app.post("/delete", (req, res) => {
 
 });
 
+app.get("/:listName", (req, res) => {
+  const listName = req.params.listName;
+
+  List.findOne({ name: listName }, (err, results) => {
+    if (!err) if (!results) {
+      const dynamicList = new List({
+        name: listName,
+        items: defaultItems
+      });
+      dynamicList.save();
+      res.redirect(`/${listName}`)
+    } else {
+      res.render("list", { listTitle: results.name, newListItems: results.items })
+    }
+
+  })
+})
 
 
-app.get("/work", function (req, res) {
-  res.render("list", { listTitle: "Work List", newListItems: workItems });
-});
-
-app.get("/about", function (req, res) {
+app.get("/about", (req, res) => {
   res.render("about");
 });
 
-app.listen(3000, function () {
+app.listen(3000, () => {
   console.log("Server started on port 3000");
 });
