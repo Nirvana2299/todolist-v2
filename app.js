@@ -1,6 +1,9 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const _ = require("lodash");
+require('dotenv').config()
+const USER_ID = process.env.USER_N;
+const USER_PA = process.env.USER_P;
 
 const app = express();
 
@@ -13,7 +16,7 @@ app.use(express.static("public"));
 main().catch(err => console.log(err));
 
 async function main() {
-  await mongoose.connect('mongodb+srv://Shoaib:svTq16aAaYh5FfJj@cluster0.4w0cefj.mongodb.net/todolistDB');
+  await mongoose.connect(`mongodb+srv://${USER_ID}:${USER_PA}@cluster0.4w0cefj.mongodb.net/todolistDB`);
 }
 
 //items Schema
